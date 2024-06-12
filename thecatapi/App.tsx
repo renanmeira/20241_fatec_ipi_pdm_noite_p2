@@ -2,42 +2,55 @@ import {
   StyleSheet,
   View,
   TextInput,
-  Button,
   Text,
   Pressable
-  } from 'react-native';
+} from 'react-native';
 
-  import {
-    useState
-    } from 'react';
+import {
+  useState
+} from 'react';
 
-  export default function App() {
-    const [busca, SetBusca] = useState('')
+export default function App() {
+  const [busca, SetBusca] = useState('')
+
+  const buscarGatos = () => {
+    fetch(`https://api.thecatapi.com/v1/images/search?limit=${busca}`, {
+      method: 'GET',
+      headers: {'x-api-key': 'live_NlMToAhRoePKfi8lz88338uu7cKIV7MyYoZC4Qraf1ZSmCmmvSWk6V9falQT347f'}
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
+      })
+      .catch(error => {
+        console.error(error)
+      })}
+
   return (
-  <View style={styles.container}>
-    <TextInput
-    style={styles.input}
-     placeholder='Buscar gatos'
-     value={busca}
-     onChangeText={SetBusca}
-/>
-  <Pressable
-  style={styles.button}>
-  <Text style={styles.buttonText}>
-  Buscar
-  </Text >
-  </Pressable>
-  </View>
-    
+    <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        placeholder='Buscar gatos'
+        value={busca}
+        onChangeText={SetBusca}
+      />
+      <Pressable
+        style={styles.button}
+        onPress={buscarGatos}>
+        <Text style={styles.buttonText}>
+          Buscar
+        </Text >
+      </Pressable>
+    </View>
   );
-  }
-  
-  const styles = StyleSheet.create({
+}
+
+const styles = StyleSheet.create({
   container: {
-  flex: 1,
-  backgroundColor: '#fff',
-  alignItems: 'center',
-  justifyContent: 'center',
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   input: {
@@ -48,19 +61,18 @@ import {
     padding: 10,
     textAlign: 'center',
     borderRadius: 4
-    },
-  
+  },
+
   button: {
-  width: '80%',
-  backgroundColor: '#0096F3', //material design blue 500
-  padding: 12,
-  borderRadius: 4
+    width: '80%',
+    backgroundColor: '#0096F3', //material design blue 500
+    padding: 12,
+    borderRadius: 4
   },
 
   buttonText: {
-  color: 'white',
-  textAlign: 'center'
+    color: 'white',
+    textAlign: 'center'
   }
 
-  });
-  
+});
