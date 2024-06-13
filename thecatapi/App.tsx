@@ -22,7 +22,9 @@ export default function App() {
   const [imagens, setImagens] = useState<Cat[]>([]);
 
   const buscarGatos = () => {
-    fetch(`https://api.thecatapi.com/v1/images/search?limit=${busca}`, {
+    const busca2 = busca === '' ? 5 : busca;
+
+    fetch(`https://api.thecatapi.com/v1/images/search?limit=${busca2}`, {
       method: 'GET',
       headers: {'x-api-key': 'live_NlMToAhRoePKfi8lz88338uu7cKIV7MyYoZC4Qraf1ZSmCmmvSWk6V9falQT347f'}
     })
