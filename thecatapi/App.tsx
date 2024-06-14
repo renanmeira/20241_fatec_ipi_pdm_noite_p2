@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, 
-          View, 
-          TextInput, 
-          Text, 
-          Pressable, 
-          FlatList, 
-          Image } from 'react-native';
+import { StyleSheet, View, TextInput, Text, TouchableOpacity, FlatList, Image } from 'react-native';
 
 interface Cat {
   id: string;
@@ -13,12 +7,11 @@ interface Cat {
 }
 
 export default function App() {
-  const [busca, SetBusca] = useState('');
-  //const [imagensAntigas, setImagensAntigas] = useState<Cat[]>([]);
+  const [busca, setBusca] = useState('');
   const [imagens, setImagens] = useState<Cat[]>([]);
 
   const buscarGatos = () => {
-    const busca2 = busca === '' ? 5 : busca;
+    const busca2 = busca === '' ? 5 : parseInt(busca, 10);
 
     fetch(`https://api.thecatapi.com/v1/images/search?limit=${busca2}`, {
       method: 'GET',
@@ -26,54 +19,50 @@ export default function App() {
     })
       .then((response) => response.json())
       .then((data: Cat[]) => {
+        console.log('Dados retornados:', data);
         setImagens(data);
-        //setImagensAntigas(imagensAnteriores)
-        SetBusca("");
+        setBusca('');
       })
-      
       .catch((error) => {
-        console.error(error);
+        console.error('Erro ao buscar gatos:', error);
       });
   };
 
-  const RemoverFotos = () => {
-    setImagens([]); 
-    SetBusca("");
-  }
+  const removerFotos = () => {
+    setImagens([]);
+    setBusca('');
+  };
 
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder="Insira a quantidade de gatos:"
-        value={busca}
-        onChangeText={SetBusca}
-      />
-      <Pressable
-          style={({ pressed }) => [
-            styles.button,
-            pressed && { transform: [{ scale: 0.95 }] },
-          ]}
+      <View style={styles.header}>
+        <TextInput
+          style={styles.input}
+          placeholder="Insira a quantidade de gatos:"
+          value={busca}
+          onChangeText={setBusca}
+          keyboardType="numeric"
+        />
+        <TouchableOpacity
+          style={styles.button}
           onPress={buscarGatos}
         >
-        <Text style={styles.buttonText}>Buscar gatos</Text>
-      </Pressable>
+          <Text style={styles.buttonText}>Buscar gatos</Text>
+        </TouchableOpacity>
 
-      <Pressable
-          style={({ pressed }) => [
-            styles.button,
-            pressed && { transform: [{ scale: 0.95 }] },
-          ]}
-          onPress={RemoverFotos}
+        <TouchableOpacity
+          style={styles.button}
+          onPress={removerFotos}
         >
-        <Text style={styles.buttonText}>Remover gatos</Text>
-      </Pressable>
-
+          <Text style={styles.buttonText}>Remover gatos</Text>
+        </TouchableOpacity>
+      </View>
       <FlatList
         style={styles.imageList}
+        contentContainerStyle={styles.imageListContainer}
         data={imagens.slice(0, 10)}
         renderItem={({ item }) => (
-          <Image source={{ uri: item.url }} style={styles.image} resizeMode="contain" />
+          <Image source={{ uri: item.url }} style={styles.image} resizeMode="cover" />
         )}
         keyExtractor={(item) => item.id}
       />
@@ -85,11 +74,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  header: {
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: 50,
   },
   input: {
     width: '80%',
+    maxWidth: 300,
     borderColor: 'gray',
     borderWidth: 1,
     marginBottom: 10,
@@ -99,24 +92,31 @@ const styles = StyleSheet.create({
   },
   button: {
     width: '80%',
+    maxWidth: 300,
     backgroundColor: '#0096F3',
     padding: 12,
     borderRadius: 4,
     marginBottom: 10,
+    alignItems: 'center',
   },
-
-
   buttonText: {
     color: 'white',
     textAlign: 'center',
   },
-
   imageList: {
     width: '100%',
   },
+  imageListContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 20,
+  },
   image: {
-    width: '100%',
+    width: 300,
     height: 200,
     marginBottom: 10,
+    borderRadius: 10,
+    borderColor: 'black',
+    borderWidth: 2,
   },
 });
