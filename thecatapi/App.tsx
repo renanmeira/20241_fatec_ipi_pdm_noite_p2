@@ -20,7 +20,7 @@ export default function App() {
       .then((response) => response.json())
       .then((data: Cat[]) => {
         console.log('Dados retornados:', data);
-        setImagens(data);
+        setImagens((prevImagens) => prevImagens.concat(data));
         setBusca('');
       })
       .catch((error) => {
@@ -60,11 +60,14 @@ export default function App() {
       <FlatList
         style={styles.imageList}
         contentContainerStyle={styles.imageListContainer}
-        data={imagens.slice(0, 10)}
+        data={imagens}
         renderItem={({ item }) => (
           <Image source={{ uri: item.url }} style={styles.image} resizeMode="cover" />
         )}
         keyExtractor={(item) => item.id}
+        initialNumToRender={10}
+        windowSize={21}
+        removeClippedSubviews={false}
       />
     </View>
   );
